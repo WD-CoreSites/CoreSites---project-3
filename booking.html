@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Engineer – ProTrade Services</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">ProTrade</div>
+    <nav>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html" class="cta-btn">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- HERO -->
+<section class="booking-hero">
+    <h1>Book an Engineer</h1>
+    <p>Fast, reliable, professional service across London.</p>
+</section>
+
+<!-- MAIN BOOKING LAYOUT -->
+<section class="booking-layout">
+
+    <!-- LEFT COLUMN: TRUST + CONTACT -->
+    <div class="booking-info">
+
+        <h2>Contact & Booking Information</h2>
+
+        <div class="info-block">
+            <h3>Main Phone</h3>
+            <p>0203 555 0192</p>
+        </div>
+
+        <div class="info-block">
+            <h3>Emergency Callout</h3>
+            <p>07984 112 880</p>
+        </div>
+
+        <div class="info-block">
+            <h3>Email</h3>
+            <p>info@exampletrades.co.uk</p>
+        </div>
+
+        <div class="info-block">
+            <h3>Service Area</h3>
+            <p>Serving all of London and surrounding areas</p>
+        </div>
+
+        <div class="info-block">
+            <h3>Opening Hours</h3>
+            <p>Mon–Fri: 8am – 6pm</p>
+            <p>Sat: 9am – 4pm</p>
+            <p>Sun: Emergency callouts only</p>
+        </div>
+
+        <div class="info-block">
+            <h3>Why Choose Us</h3>
+            <ul>
+                <li>Fast, reliable same‑day service</li>
+                <li>Transparent pricing with no hidden fees</li>
+                <li>Fully qualified and insured engineers</li>
+                <li>Friendly, professional, and respectful team</li>
+                <li>Trusted by homeowners across London</li>
+            </ul>
+        </div>
+
+        <div class="trust-badges">
+            <span>✔ Fully Insured</span>
+            <span>✔ DBS Checked</span>
+            <span>✔ City & Guilds Qualified</span>
+            <span>✔ 24/7 Emergency Callouts</span>
+            <span>✔ No Call‑Out Fees</span>
+        </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: BOOKING FORM -->
+    <div class="booking-form-container">
+        <form id="booking-form" class="booking-form">
+
+            <h2>Request a Booking</h2>
+
+            <label>Full Name</label>
+            <input type="text" id="name" required>
+
+            <label>Email Address</label>
+            <input type="email" id="email" required>
+
+            <label>Phone Number</label>
+            <input type="tel" id="phone" required>
+
+            <label>Select Service</label>
+            <select id="service" required>
+                <option value="">Choose a service</option>
+                <option>Plumbing</option>
+                <option>Electrical</option>
+                <option>Gas Engineering</option>
+                <option>Heating</option>
+                <option>General Repairs</option>
+            </select>
+
+            <label>Preferred Date</label>
+            <div class="calendar-wrapper">
+                <input type="text" id="date" placeholder="Select a date" readonly required>
+                <div id="calendar" class="calendar hidden"></div>
+            </div>
+
+            <p id="date-warning" class="date-warning" style="display:none;">
+                This date is unavailable. Please choose another.
+            </p>
+
+            <label>Preferred Time Slot</label>
+            <select id="time-slot" required>
+                <option value="">Select a time</option>
+            </select>
+
+            <label>Additional Details (Optional)</label>
+            <textarea id="details" placeholder="Describe the issue or job..."></textarea>
+
+            <button type="submit" class="primary-btn">Submit Booking</button>
+
+            <p id="confirmation-message" class="confirmation-message" style="display:none;">
+                Thank you! Your booking request has been submitted. We’ll contact you shortly.
+            </p>
+
+
+        </form>
+    </div>
+<select id="time-select">
+    <option value="">Select a time</option>
+    <option value="08:00">08:00</option>
+    <option value="10:00">10:00</option>
+    <option value="12:00">12:00</option>
+    <option value="14:00">14:00</option>
+    <option value="16:00">16:00</option>
+    <option value="18:00">18:00</option>
+</select>
+</section>
+
+<footer>
+    <p>© 2026 ProTrade Services. All rights reserved.</p>
+</footer>
+
+<script>
+// =========================
+// ELEMENT REFERENCES
+// =========================
+const dateInput = document.getElementById("date");
+const calendar = document.getElementById("calendar");
+const warning = document.getElementById("date-warning");
+const timeSlotSelect = document.getElementById("time-slot");
+
+// =========================
+// UNAVAILABLE DATES + TIME SLOTS
+// =========================
+const unavailableDates = [
+    "2026-03-15",
+    "2026-03-18",
+    "2026-03-22"
+];
+
+const timeSlots = {
+    "default": ["09:00", "11:00", "13:00", "15:00"],
+    "2026-03-15": [],
+    "2026-03-18": ["11:00"],
+    "2026-03-22": []
+};
+
+// =========================
+// WEEKEND CHECK
+// =========================
+function isWeekend(date) {
+    const day = new Date(date).getDay();
+    return day === 0 || day === 6;
+}
+
+// =========================
+// SHAKE + RED HIGHLIGHT
+// =========================
+function triggerErrorAnimation() {
+    dateInput.classList.add("date-error");
+    setTimeout(() => dateInput.classList.remove("date-error"), 600);
+}
+
+// =========================
+// LOAD TIME SLOTS
+// =========================
+function loadTimeSlots(date) {
+    timeSlotSelect.innerHTML = "<option value=''>Select a time</option>";
+
+    const slots = timeSlots[date] || timeSlots["default"];
+
+    if (slots.length === 0) {
+        timeSlotSelect.innerHTML = "<option>No available slots</option>";
+        timeSlotSelect.disabled = true;
+    } else {
+        timeSlotSelect.disabled = false;
+        slots.forEach(slot => {
+            const option = document.createElement("option");
+            option.value = slot;
+            option.textContent = slot;
+            timeSlotSelect.appendChild(option);
+        });
+    }
+}
+
+// =========================
+// CUSTOM AIRBNB-STYLE CALENDAR
+// =========================
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+function renderCalendar(month, year) {
+    calendar.innerHTML = "";
+
+    const header = document.createElement("div");
+    header.className = "calendar-header";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "‹";
+    prevBtn.onclick = () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendar(currentMonth, currentYear);
+    };
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "›";
+    nextBtn.onclick = () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar(currentMonth, currentYear);
+    };
+
+    const title = document.createElement("h3");
+    title.textContent = new Date(year, month).toLocaleString("default", {
+        month: "long",
+        year: "numeric"
+    });
+
+    header.append(prevBtn, title, nextBtn);
+    calendar.appendChild(header);
+
+    const grid = document.createElement("div");
+    grid.className = "calendar-grid";
+
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    days.forEach(d => {
+        const label = document.createElement("div");
+        label.textContent = d;
+        label.style.fontWeight = "bold";
+        grid.appendChild(label);
+    });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+        grid.appendChild(document.createElement("div"));
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(year, month, day);
+        const dateStr = date.toISOString().split("T")[0];
+
+        const cell = document.createElement("div");
+        cell.className = "calendar-day";
+        cell.textContent = day;
+
+        if (dateStr === new Date().toISOString().split("T")[0]) {
+            cell.classList.add("today");
+        }
+
+        const isBlocked = unavailableDates.includes(dateStr) || isWeekend(dateStr);
+
+        if (isBlocked) {
+            cell.classList.add("disabled");
+
+            // Shake + highlight when clicking disabled dates
+            cell.onclick = () => {
+                warning.style.display = "block";
+                triggerErrorAnimation();
+            };
+
+        } else {
+            cell.onclick = () => {
+                dateInput.value = dateStr;
+                warning.style.display = "none";
+
+                document.querySelectorAll(".calendar-day").forEach(d =>
+                    d.classList.remove("selected")
+                );
+                cell.classList.add("selected");
+
+                calendar.classList.add("hidden");
+                loadTimeSlots(dateStr);
+            };
+        }
+
+        grid.appendChild(cell);
+    }
+
+    calendar.appendChild(grid);
+}
+
+// =========================
+// OPEN/CLOSE CALENDAR
+// =========================
+dateInput.addEventListener("click", () => {
+    calendar.classList.toggle("hidden");
+    renderCalendar(currentMonth, currentYear);
+});
+</script>
+
+<script>
+// =========================
+// FORM SUBMISSION
+// =========================
+document.getElementById("booking-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    document.getElementById("confirmation-message").style.display = "block";
+    this.reset();
+});
+
+// Read URL parameters
+const params = new URLSearchParams(window.location.search);
+
+const selectedService = params.get("service");
+const selectedUrgency = params.get("urgency");
+const selectedJob = params.get("job");
+
+// Auto-fill service
+if (selectedService) {
+    const serviceDropdown = document.getElementById("service-select");
+    if (serviceDropdown) {
+        serviceDropdown.value = selectedService;
+    }
+}
+
+// Auto-fill urgency
+if (selectedUrgency) {
+    const urgencyDropdown = document.getElementById("urgency-select");
+    if (urgencyDropdown) {
+        urgencyDropdown.value = selectedUrgency;
+    }
+}
+
+// Auto-fill job size (optional)
+if (selectedJob) {
+    const jobDropdown = document.getElementById("job-size-select");
+    if (jobDropdown) {
+        jobDropdown.value = selectedJob;
+    }
+}
+
+// Auto-select earliest same-day slot
+if (selectedUrgency === "same-day") {
+    const timeDropdown = document.getElementById("time-select");
+
+    if (timeDropdown) {
+        const now = new Date();
+        const currentHour = now.getHours();
+
+        // Find the next available slot today
+        let bestSlot = null;
+
+        for (let option of timeDropdown.options) {
+            const hour = parseInt(option.value.split(":")[0]);
+
+            if (hour >= currentHour) {
+                bestSlot = option.value;
+                break;
+            }
+        }
+
+        // If no slots left today, pick first slot tomorrow
+        if (!bestSlot) {
+            bestSlot = timeDropdown.options[0].value;
+        }
+
+        timeDropdown.value = bestSlot;
+    }
+}
+
+</script>
+</body>
+</html>

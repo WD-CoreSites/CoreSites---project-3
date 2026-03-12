@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Quote – ProTrade Services</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">ProTrade</div>
+    <nav>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="quote.html" class="cta-btn">Get a Quote</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- HERO -->
+<section class="quote-hero">
+    <h1>Instant Online Quote</h1>
+    <p>Select the services you need and get a realistic estimate instantly.</p>
+</section>
+
+<!-- QUOTE SIMULATOR -->
+<section class="quote-container">
+
+    <!-- SERVICES -->
+    <div class="quote-section">
+        <h2>Select Services Needed</h2>
+
+        <div class="checkbox-group">
+
+    <input type="checkbox" id="service-plumbing" class="service-option" value="plumbing">
+    <label for="service-plumbing">Plumbing</label>
+
+    <input type="checkbox" id="service-electrical" class="service-option" value="electrical">
+    <label for="service-electrical">Electrical</label>
+
+    <input type="checkbox" id="service-gas" class="service-option" value="gas">
+    <label for="service-gas">Gas Engineering</label>
+
+    <input type="checkbox" id="service-heating" class="service-option" value="heating">
+    <label for="service-heating">Heating</label>
+
+    <input type="checkbox" id="service-repairs" class="service-option" value="repairs">
+    <label for="service-repairs">General Repairs</label>
+
+    <input type="checkbox" id="service-handyman" class="service-option" value="handyman">
+    <label for="service-handyman">Handyman</label>
+
+</div>
+    </div>
+
+    <!-- JOB SIZE -->
+    <div class="quote-section">
+        <h2>Job Size</h2>
+        <select id="job-size">
+            <option value="">Select job size</option>
+            <option value="small">Small Job</option>
+            <option value="medium">Medium Job</option>
+            <option value="large">Large Job</option>
+        </select>
+    </div>
+
+    <!-- URGENCY -->
+    <div class="quote-section">
+        <h2>Urgency</h2>
+        <select id="urgency">
+            <option value="standard">Standard</option>
+            <option value="same-day">Same‑Day</option>
+            <option value="emergency">Emergency</option>
+        </select>
+    </div>
+
+    <!-- OPTIONAL EXTRAS -->
+    <div class="quote-section">
+        <h2>Optional Extras</h2>
+
+        <div class="checkbox-group">
+
+    <input type="checkbox" id="extra-weekend" class="extra-option" value="weekend">
+    <label for="extra-weekend">Weekend Appointment</label>
+
+    <input type="checkbox" id="extra-cleanup" class="extra-option" value="cleanup">
+    <label for="extra-cleanup">Clean‑Up Service</label>
+
+    <div id="parts-sourcing-wrapper" style="display:none;">
+        <input type="checkbox" id="extra-parts" class="extra-option" value="parts">
+        <label for="extra-parts">Parts Sourcing (Handyman Only)</label>
+    </div>
+
+    </div>
+
+    <!-- HANDYMAN MATERIALS -->
+    <div class="quote-section" id="materials-section" style="display:none;">
+        <h2>Handyman Materials (Optional)</h2>
+
+        <div class="checkbox-group">
+
+    <input type="checkbox" id="mat-tv" class="material-option" value="tv-bracket">
+    <label for="mat-tv">TV Mounting Bracket</label>
+
+    <input type="checkbox" id="mat-shelving" class="material-option" value="shelving">
+    <label for="mat-shelving">Shelving Materials</label>
+
+    <input type="checkbox" id="mat-curtain" class="material-option" value="curtain-rail">
+    <label for="mat-curtain">Curtain Rail Kit</label>
+
+    <input type="checkbox" id="mat-furniture" class="material-option" value="furniture-hardware">
+    <label for="mat-furniture">Furniture Assembly Hardware</label>
+
+    <input type="checkbox" id="mat-wallplugs" class="material-option" value="wall-plugs">
+    <label for="mat-wallplugs">Wall Plugs & Fixings</label>
+
+    <input type="checkbox" id="mat-adhesives" class="material-option" value="adhesives">
+    <label for="mat-adhesives">Adhesives / Sealants</label>
+
+</div>
+    </div>
+
+    <!-- CALCULATE BUTTON -->
+    <button id="calculate-btn" class="primary-btn">Calculate Quote</button>
+
+    <!-- RESULT -->
+    <div id="quote-result" class="quote-result" style="display:none;">
+        <h2>Your Estimated Quote</h2>
+        <p id="quote-amount">£0</p>
+
+        <a id="book-now-btn" href="booking.html" class="primary-btn">Book Now</a>
+    </div>
+
+</section>
+
+<footer>
+    <p>© 2026 ProTrade Services. All rights reserved.</p>
+</footer>
+<script>
+// ===============================
+// SERVICE BASE PRICES (REALISTIC)
+// ===============================
+const basePrices = {
+    plumbing: [60, 350],
+    electrical: [70, 400],
+    gas: [80, 500],
+    heating: [80, 450],
+    repairs: [40, 150],
+    handyman: [40, 200]
+};
+
+// ===============================
+// MATERIAL COSTS (PER ITEM)
+// ===============================
+const materialCosts = {
+    "tv-bracket": [10, 25],
+    "shelving": [15, 35],
+    "curtain-rail": [10, 30],
+    "furniture-hardware": [10, 20],
+    "wall-plugs": [5, 15],
+    "adhesives": [5, 10]
+};
+
+// ===============================
+// JOB SIZE MULTIPLIERS
+// ===============================
+const jobSizeMultiplier = {
+    small: 1,
+    medium: 1.4,
+    large: 1.8
+};
+
+// ===============================
+// URGENCY MULTIPLIERS
+// ===============================
+const urgencyMultiplier = {
+    "standard": 1,
+    "same-day": 1.3,
+    "emergency": 1.6
+};
+
+// ===============================
+// OPTIONAL EXTRAS COSTS
+// ===============================
+const extrasCost = {
+    weekend: 40,
+    cleanup: 20,
+    parts: 15 // handyman only
+};
+
+// ===============================
+// ELEMENTS
+// ===============================
+const serviceOptions = document.querySelectorAll(".service-option");
+const jobSizeSelect = document.getElementById("job-size");
+const urgencySelect = document.getElementById("urgency");
+const extraOptions = document.querySelectorAll(".extra-option");
+const materialOptions = document.querySelectorAll(".material-option");
+
+const materialsSection = document.getElementById("materials-section");
+const partsSourcingWrapper = document.getElementById("parts-sourcing-wrapper");
+
+const calculateBtn = document.getElementById("calculate-btn");
+const quoteResult = document.getElementById("quote-result");
+const quoteAmount = document.getElementById("quote-amount");
+const bookNowBtn = document.getElementById("book-now-btn");
+
+// ===============================
+// SHOW/HIDE HANDYMAN SECTIONS
+// ===============================
+function updateHandymanVisibility() {
+    const handymanSelected = [...serviceOptions].some(opt => opt.value === "handyman" && opt.checked);
+
+    materialsSection.style.display = handymanSelected ? "block" : "none";
+    partsSourcingWrapper.style.display = handymanSelected ? "block" : "none";
+}
+
+serviceOptions.forEach(opt => {
+    opt.addEventListener("change", updateHandymanVisibility);
+});
+
+// ===============================
+// CALCULATE QUOTE
+// ===============================
+calculateBtn.addEventListener("click", () => {
+    const selectedServices = [...serviceOptions].filter(opt => opt.checked).map(opt => opt.value);
+
+    if (selectedServices.length === 0) {
+        alert("Please select at least one service.");
+        return;
+    }
+
+    if (!jobSizeSelect.value) {
+        alert("Please select a job size.");
+        return;
+    }
+
+    let total = 0;
+
+    // ===============================
+    // SERVICE COSTS
+    // ===============================
+    selectedServices.forEach(service => {
+        const [min, max] = basePrices[service];
+        const base = Math.floor(Math.random() * (max - min) + min);
+
+        total += base;
+    });
+
+    // ===============================
+    // JOB SIZE MULTIPLIER
+    // ===============================
+    total *= jobSizeMultiplier[jobSizeSelect.value];
+
+    // ===============================
+    // URGENCY MULTIPLIER
+    // ===============================
+    total *= urgencyMultiplier[urgencySelect.value];
+
+    // ===============================
+    // OPTIONAL EXTRAS
+    // ===============================
+    extraOptions.forEach(extra => {
+        if (extra.checked) {
+            if (extra.value === "parts") {
+                // Only add parts sourcing if handyman is selected
+                if (selectedServices.includes("handyman")) {
+                    total += extrasCost.parts;
+                }
+            } else {
+                total += extrasCost[extra.value];
+            }
+        }
+    });
+
+    // ===============================
+    // HANDYMAN MATERIALS
+    // ===============================
+    if (selectedServices.includes("handyman")) {
+        materialOptions.forEach(mat => {
+            if (mat.checked) {
+                const [min, max] = materialCosts[mat.value];
+
+                // Scale materials with job size
+                let materialPrice = Math.floor(Math.random() * (max - min) + min);
+
+                if (jobSizeSelect.value === "medium") materialPrice *= 1.3;
+                if (jobSizeSelect.value === "large") materialPrice *= 1.6;
+
+                total += materialPrice;
+            }
+        });
+    }
+
+    // ===============================
+    // FINAL PRICE
+    // ===============================
+    const finalPrice = Math.round(total);
+
+    quoteAmount.textContent = `£${finalPrice}`;
+    quoteResult.style.display = "block";
+
+    // ===============================
+    // BOOK NOW BUTTON PRE-SELECT
+    // ===============================
+    const firstService = selectedServices[0];
+    bookNowBtn.href = `booking.html?service=${firstService}`;
+});
+</script>
+</body>
+</html>
